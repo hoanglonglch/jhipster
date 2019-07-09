@@ -2,6 +2,7 @@ package org.jhipster.blog.web.rest;
 
 import org.jhipster.blog.domain.Ticket;
 import org.jhipster.blog.repository.TicketRepository;
+import org.jhipster.blog.security.AuthoritiesConstants;
 import org.jhipster.blog.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +104,7 @@ public class TicketResource {
         if (eagerload) {
             page = ticketRepository.findAllWithEagerRelationships(pageable);
         } else {
+//            page = ticketRepository.findAllByOrderByDueDateAsc(pageable);
             page = ticketRepository.findAll(pageable);
         }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(uriBuilder.queryParams(queryParams), page);
@@ -128,6 +131,7 @@ public class TicketResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/tickets/{id}")
+    @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         log.debug("REST request to delete Ticket : {}", id);
         ticketRepository.deleteById(id);
